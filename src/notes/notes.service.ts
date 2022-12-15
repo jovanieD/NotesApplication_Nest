@@ -1,7 +1,8 @@
 import { Injectable, NotFoundException } from '@nestjs/common';
 import {v4 as uuidv4} from 'uuid';
 import { CreateNOtesDto } from 'src/dtos/createtask.dto';
-import { Notes } from './notes.model';
+import { Notes, NotesStatus } from './notes.model';
+import { GetNotesFilterDto } from 'src/dtos/get-notes-filter.dto';
 
 @Injectable()
 export class NotesService {
@@ -10,17 +11,29 @@ export class NotesService {
             {
                 id : "123fwr11qe",
                 title: "vanie",
-                description : "vanie123"
+                description : "vanie123",
+                status: NotesStatus.OPEN
             },
             {
                 id : "24sadf4tf4",
                 title: "dasian",
-                description : "dasian123"
+                description : "dasian123",
+                status: NotesStatus.OPEN
             }
         ];
     
-        getAllNOtes() : Notes[] {
-            return this.notes;
+        getAllNOtes(filterDto:GetNotesFilterDto) : Notes[] {
+            const {status,search} = filterDto;
+            let notes = this.notes;
+
+            if (status){
+                 notes= notes.filter(x => x.status === status);
+            }
+            if (search){
+                notes= notes.filter(x => x.title.includes(search)|| x.description.includes(search));
+            }
+            return notes;
+                
         }
 
         getOneNote ( id : string ): Notes {
@@ -38,7 +51,8 @@ export class NotesService {
             const newNote : Notes = {
                 id : uuidv4(),
                 title,
-                description
+                description,
+                status: NotesStatus.OPEN
             }
 
             this.notes.push(newNote)
@@ -46,10 +60,10 @@ export class NotesService {
 
         }
 
-        updateNote(id : string,title : string,  description : string ) : Notes{
+        updateNote(id : string,title:string, status : NotesStatus ) : Notes{
             const note = this.getOneNote(id);
             note.title = title;
-            note.description = description;
+            note.status = status;
             return note;
         }
 

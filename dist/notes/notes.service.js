@@ -9,23 +9,34 @@ Object.defineProperty(exports, "__esModule", { value: true });
 exports.NotesService = void 0;
 const common_1 = require("@nestjs/common");
 const uuid_1 = require("uuid");
+const notes_model_1 = require("./notes.model");
 let NotesService = class NotesService {
     constructor() {
         this.notes = [
             {
                 id: "123fwr11qe",
                 title: "vanie",
-                description: "vanie123"
+                description: "vanie123",
+                status: notes_model_1.NotesStatus.OPEN
             },
             {
                 id: "24sadf4tf4",
                 title: "dasian",
-                description: "dasian123"
+                description: "dasian123",
+                status: notes_model_1.NotesStatus.OPEN
             }
         ];
     }
-    getAllNOtes() {
-        return this.notes;
+    getAllNOtes(filterDto) {
+        const { status, search } = filterDto;
+        let notes = this.notes;
+        if (status) {
+            notes = notes.filter(x => x.status === status);
+        }
+        if (search) {
+            notes = notes.filter(x => x.title.includes(search) || x.description.includes(search));
+        }
+        return notes;
     }
     getOneNote(id) {
         const note = this.notes.find(note => note.id == id);
@@ -39,15 +50,16 @@ let NotesService = class NotesService {
         const newNote = {
             id: (0, uuid_1.v4)(),
             title,
-            description
+            description,
+            status: notes_model_1.NotesStatus.OPEN
         };
         this.notes.push(newNote);
         return newNote;
     }
-    updateNote(id, title, description) {
+    updateNote(id, title, status) {
         const note = this.getOneNote(id);
         note.title = title;
-        note.description = description;
+        note.status = status;
         return note;
     }
     deleteNote(id) {

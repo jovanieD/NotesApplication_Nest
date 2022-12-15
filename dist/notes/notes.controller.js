@@ -15,13 +15,16 @@ Object.defineProperty(exports, "__esModule", { value: true });
 exports.NotesController = void 0;
 const common_1 = require("@nestjs/common");
 const createtask_dto_1 = require("../dtos/createtask.dto");
+const get_notes_filter_dto_1 = require("../dtos/get-notes-filter.dto");
+const notes_status_validation_pipes_1 = require("../pipes/notes-status-validation.pipes");
+const notes_model_1 = require("./notes.model");
 const notes_service_1 = require("./notes.service");
 let NotesController = class NotesController {
     constructor(notesService) {
         this.notesService = notesService;
     }
-    getAllNotes() {
-        return this.notesService.getAllNOtes();
+    getAllNotes(filterDto) {
+        return this.notesService.getAllNOtes(filterDto);
     }
     getTask(id) {
         return this.notesService.getOneNote(id);
@@ -32,14 +35,15 @@ let NotesController = class NotesController {
     createNote(body) {
         return this.notesService.createNote(body);
     }
-    updateNote(id, title, description) {
-        return this.notesService.updateNote(id, title, description);
+    updateNote(id, title, status) {
+        return this.notesService.updateNote(id, title, status);
     }
 };
 __decorate([
     (0, common_1.Get)(),
+    __param(0, (0, common_1.Query)(common_1.ValidationPipe)),
     __metadata("design:type", Function),
-    __metadata("design:paramtypes", []),
+    __metadata("design:paramtypes", [get_notes_filter_dto_1.GetNotesFilterDto]),
     __metadata("design:returntype", Array)
 ], NotesController.prototype, "getAllNotes", null);
 __decorate([
@@ -58,6 +62,7 @@ __decorate([
 ], NotesController.prototype, "deleteNote", null);
 __decorate([
     (0, common_1.Post)('create'),
+    (0, common_1.UsePipes)(common_1.ValidationPipe),
     __param(0, (0, common_1.Body)()),
     __metadata("design:type", Function),
     __metadata("design:paramtypes", [createtask_dto_1.CreateNOtesDto]),
@@ -67,7 +72,7 @@ __decorate([
     (0, common_1.Patch)(':id'),
     __param(0, (0, common_1.Param)('id')),
     __param(1, (0, common_1.Body)('title')),
-    __param(2, (0, common_1.Body)('description')),
+    __param(2, (0, common_1.Body)('status', notes_status_validation_pipes_1.NotesStatusValidationPipe)),
     __metadata("design:type", Function),
     __metadata("design:paramtypes", [String, String, String]),
     __metadata("design:returntype", Object)

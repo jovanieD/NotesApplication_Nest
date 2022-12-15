@@ -60,7 +60,7 @@ export class NotesService {
 
         }
 
-        updateNote(id : string,title:string, status : NotesStatus ) : Notes{
+        updateNote(id : string, title:string, status : NotesStatus ) : Notes{
             const note = this.getOneNote(id);
             note.title = title;
             note.status = status;

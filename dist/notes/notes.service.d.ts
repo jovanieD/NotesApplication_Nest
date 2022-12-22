@@ -1,11 +1,13 @@
-import { CreateNOtesDto } from 'src/dtos/createtask.dto';
-import { Notes, NotesStatus } from './notes.model';
-import { GetNotesFilterDto } from 'src/dtos/get-notes-filter.dto';
+import { CreateNotesDto } from 'src/dtos/createtnote.dto';
+import { NotesStatus } from './notes.model';
+import { Note } from './note.entity';
+import { Repository } from 'typeorm';
 export declare class NotesService {
-    private notes;
-    getAllNOtes(filterDto: GetNotesFilterDto): Notes[];
-    getOneNote(id: string): Notes;
-    createNote(note: CreateNOtesDto): Notes;
-    updateNote(id: string, title: string, status: NotesStatus): Notes;
-    deleteNote(id: string): void;
+    private noteRepository;
+    constructor(noteRepository: Repository<Note>);
+    getAllNotes(): Promise<Note[]>;
+    getOneNote(id: number): Promise<Note>;
+    createNote(createNote: CreateNotesDto): Promise<Note>;
+    deleteNote(id: number): Promise<void>;
+    updateNote(id: number, status: NotesStatus): Promise<{}>;
 }
